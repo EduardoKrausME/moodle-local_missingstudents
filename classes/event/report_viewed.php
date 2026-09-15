@@ -64,6 +64,6 @@ class report_viewed extends \core\event\base {
      * @throws \core\exception\moodle_exception
      */
     public function get_url(): \moodle_url {
-        return new \moodle_url("/local/missingstudents/index.php", ["id" => $this->courseid]);
+        return new \moodle_url("/local/missingstudents/", ["id" => $this->courseid]);
     }
 }

@@ -42,26 +42,34 @@
             <h2 class="ms-title">{{#str}}pluginname, local_missingstudents{{/str}}</h2>
             <p class="ms-subtitle">{{#str}}reportsubtitle, local_missingstudents{{/str}}</p>
         </div>
-        <a class="btn btn-outline-secondary" href="{{downloadurl}}">{{#str}}exportcsv, local_missingstudents{{/str}}</a>
+        <a class="btn btn-outline-secondary" href="{{{downloadurl}}}">{{#str}}exportcsv, local_missingstudents{{/str}}</a>
     </div>
 
-    <div class="ms-toolbar card">
-        <form method="get" class="ms-filter-form">
-            <input type="hidden" name="id" value="{{courseid}}">
-            <input type="hidden" name="scope" value="{{#scopecourse}}course{{/scopecourse}}{{#scopesite}}site{{/scopesite}}">
-            <label>
-                <span>{{#str}}threshold, local_missingstudents{{/str}}</span>
-                <select class="form-select" name="days">
-                    {{#thresholdoptions}}
-                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                    {{/thresholdoptions}}
-                </select>
-            </label>
-            <button class="btn btn-primary" type="submit">{{#str}}apply, local_missingstudents{{/str}}</button>
-        </form>
-        <div class="ms-scope-switch" role="group" aria-label="{{#str}}scope, local_missingstudents{{/str}}">
-            <a href="{{coursescopeurl}}" class="btn {{#scopecourse}}btn-primary{{/scopecourse}}{{^scopecourse}}btn-outline-primary{{/scopecourse}}">{{#str}}scope_course, local_missingstudents{{/str}}</a>
-            <a href="{{sitescopeurl}}" class="btn {{#scopesite}}btn-primary{{/scopesite}}{{^scopesite}}btn-outline-primary{{/scopesite}}">{{#str}}scope_site, local_missingstudents{{/str}}</a>
+    <div class="card ms-kpi mb-3">
+        <div class="d-flex justify-content-between">
+            <form method="get" class="ms-filter-form">
+                <input type="hidden" name="id" value="{{courseid}}">
+                <input type="hidden" name="scope"
+                       value="{{#scopecourse}}course{{/scopecourse}}{{#scopesite}}site{{/scopesite}}">
+                <label>
+                    <span>{{#str}}threshold, local_missingstudents{{/str}}</span>
+                    <select class="form-select" name="days">
+                        {{#thresholdoptions}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                        {{/thresholdoptions}}
+                    </select>
+                </label>
+                <button class="btn btn-primary" type="submit">{{#str}}apply, local_missingstudents{{/str}}</button>
+            </form>
+            <div class="ms-scope-switch btn-group" role="group"
+                 aria-label="{{#str}}scope, local_missingstudents{{/str}}">
+                <a href="{{{coursescopeurl}}}"
+                   class="btn {{#scopecourse}}btn-primary{{/scopecourse}}{{^scopecourse}}btn-outline-primary{{/scopecourse}}">
+                    {{#str}}scope_course, local_missingstudents{{/str}}</a>
+                <a href="{{{sitescopeurl}}}"
+                   class="btn {{#scopesite}}btn-primary{{/scopesite}}{{^scopesite}}btn-outline-primary{{/scopesite}}">
+                    {{#str}}scope_site, local_missingstudents{{/str}}</a>
+            </div>
         </div>
         <div class="ms-scope-description">
             {{#scopecourse}}{{#str}}courseaccessdescription, local_missingstudents{{/str}}{{/scopecourse}}
@@ -147,7 +155,7 @@
         </div>
         <div class="ms-critical-list">
             {{#topstudents}}
-            <a class="ms-critical-row" href="{{profileurl}}">
+            <a class="ms-critical-row" href="{{{profileurl}}}">
                 <div class="ms-avatar">{{{picture}}}</div>
                 <div class="ms-critical-main">
                     <div class="ms-critical-head"><strong>{{fullname}}</strong><span class="ms-risk-pill {{riskclass}}">{{risklabel}}</span></div>
@@ -197,7 +205,7 @@
                     {{#students}}
                     <tr data-region="student-row" data-risk="{{riskkey}}" data-days="{{dayssort}}" data-search="{{fullname}} {{email}} {{idnumber}}">
                         <td>
-                            <a class="ms-student" href="{{profileurl}}">
+                            <a class="ms-student" href="{{{profileurl}}}">
                                 <span class="ms-avatar">{{{picture}}}</span>
                                 <span><strong>{{fullname}}</strong><small>{{email}}{{#idnumber}} · {{idnumber}}{{/idnumber}}</small></span>
                             </a>

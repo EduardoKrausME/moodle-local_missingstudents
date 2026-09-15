@@ -40,7 +40,7 @@ function local_missingstudents_extend_navigation_course(navigation_node $navigat
         return;
     }
 
-    $url = new moodle_url("/local/missingstudents/index.php", ["id" => $COURSE->id]);
+    $url = new moodle_url("/local/missingstudents/", ["id" => $COURSE->id]);
 
     $node = navigation_node::create(
         get_string("coursenavigation", "local_missingstudents"),
@@ -53,6 +53,10 @@ function local_missingstudents_extend_navigation_course(navigation_node $navigat
     $navigation->add_node($node);
 
     if ((int)get_config("local_missingstudents", "showcoursebutton") === 0) {
+        return;
+    }
+
+    if ($PAGE->url->get_path() !== "/course/view.php") {
         return;
     }
 

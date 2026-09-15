@@ -24,14 +24,21 @@
 
 namespace local_missingstudents;
 
+use coding_exception;
+use context_course;
+use core\exception\moodle_exception;
+use dml_exception;
+use moodle_url;
+use stdClass;
+
 /**
  * Builds the missing students report for one course.
  */
 class report_service {
-    /** @var \stdClass */
+    /** @var stdClass */
     private $course;
 
-    /** @var \context_course */
+    /** @var context_course */
     private $context;
 
     /** @var int */
@@ -45,12 +52,13 @@ class report_service {
 
     /**
      * Construct
-     * @param \stdClass $course
-     * @param \context_course $context
+     *
+     * @param stdClass $course
+     * @param context_course $context
      * @param int $days
      * @param string $scope
      */
-    public function __construct(\stdClass $course, \context_course $context, int $days, string $scope) {
+    public function __construct(stdClass $course, context_course $context, int $days, string $scope) {
         $this->course = $course;
         $this->context = $context;
         $this->days = max(1, $days);
@@ -65,6 +73,7 @@ class report_service {
      * report remains efficient and does not touch the very large log table.
      *
      * @return array
+     * @throws dml_exception
      */
     public function get_students(): array {
         global $DB;
@@ -106,10 +115,13 @@ class report_service {
     /**
      * Returns the complete dashboard data prepared for Mustache.
      *
-     * @param \core_renderer $output
      * @return array
+     * @throws coding_exception
+     * @throws moodle_exception
+     * @throws dml_exception
      */
-    public function get_dashboard_data(\core_renderer $output): array {
+    public function get_dashboard_data(): array {
+        global $OUTPUT;
         $students = $this->get_students();
         $missing = [];
         $active = 0;
@@ -127,7 +139,7 @@ class report_service {
                 continue;
             }
 
-            $view = $this->build_student_view($student, $output);
+            $view = $this->build_student_view($student);
             $missing[] = $view;
 
             if ($view["never"]) {
@@ -194,22 +206,22 @@ class report_service {
             "topstudents" => $topstudents,
             "hastopstudents" => !empty($topstudents),
             "thresholdoptions" => $this->get_threshold_options(),
-            "downloadurl" => (new \moodle_url("/local/missingstudents/index.php", [
+            "downloadurl" => new moodle_url("/local/missingstudents/", [
                 "id" => $this->course->id,
                 "days" => $this->days,
                 "scope" => $this->scope,
                 "download" => "csv",
-            ]))->out(false),
-            "coursescopeurl" => (new \moodle_url("/local/missingstudents/index.php", [
+            ]),
+            "coursescopeurl" => new moodle_url("/local/missingstudents/", [
                 "id" => $this->course->id,
                 "days" => $this->days,
                 "scope" => "course",
-            ]))->out(false),
-            "sitescopeurl" => (new \moodle_url("/local/missingstudents/index.php", [
+            ]),
+            "sitescopeurl" => new moodle_url("/local/missingstudents/", [
                 "id" => $this->course->id,
                 "days" => $this->days,
                 "scope" => "site",
-            ]))->out(false),
+            ]),
         ];
     }
 
@@ -244,23 +256,24 @@ class report_service {
     /**
      * get_relevant_access
      *
-     * @param \stdClass $student
+     * @param stdClass $student
      * @return int
      */
-    private function get_relevant_access(\stdClass $student): int {
+    private function get_relevant_access(stdClass $student): int {
         return $this->scope === "site" ? (int)$student->siteaccess : (int)$student->courseaccess;
     }
 
     /**
      * build_student_view
      *
-     * @param \stdClass $student
-     * @param \core_renderer $output
+     * @param stdClass $student
      * @return array
-     * @throws \coding_exception
+     * @throws coding_exception
      * @throws \core\exception\moodle_exception
      */
-    private function build_student_view(\stdClass $student, \core_renderer $output): array {
+    private function build_student_view(stdClass $student): array {
+        global $OUTPUT;
+
         $access = $this->get_relevant_access($student);
         $never = $access === 0;
         $daysmissing = $never ? 99999 : max(0, (int)floor(($this->now - $access) / DAYSECS));
@@ -271,11 +284,11 @@ class report_service {
             "fullname" => fullname($student),
             "email" => $student->email,
             "idnumber" => $student->idnumber,
-            "profileurl" => (new \moodle_url("/user/view.php", [
+            "profileurl" => (new moodle_url("/user/view.php", [
                 "id" => $student->id,
                 "course" => $this->course->id,
             ]))->out(false),
-            "picture" => $output->user_picture($student, ["size" => 48, "link" => false]),
+            "picture" => $OUTPUT->user_picture($student, ["size" => 48, "link" => false]),
             "never" => $never,
             "daysmissing" => $never ? 0 : $daysmissing,
             "dayssort" => $never ? 99999 : $daysmissing,
@@ -304,7 +317,7 @@ class report_service {
      * @param bool $never
      * @param int $days
      * @return array
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     private function get_risk(bool $never, int $days): array {
         if ($never) {
@@ -348,7 +361,7 @@ class report_service {
      * @param array $students
      * @param int $total
      * @return array
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     private function build_buckets(array $students, int $total): array {
         $definitions = [
@@ -382,7 +395,7 @@ class report_service {
      * @param array $students
      * @param int $total
      * @return array
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     private function build_risk_groups(array $students, int $total): array {
         $groups = [
@@ -412,7 +425,7 @@ class report_service {
      * get_threshold_options
      *
      * @return array
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     private function get_threshold_options(): array {
         $options = [];

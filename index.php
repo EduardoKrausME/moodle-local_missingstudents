@@ -25,10 +25,58 @@
 require_once(__DIR__ . "/../../config.php");
 require_once($CFG->libdir . "/csvlib.class.php");
 
-$courseid = required_param("id", PARAM_INT);
+$courseid = optional_param("id", 0, PARAM_INT);
 $days = optional_param("days", 0, PARAM_INT);
 $scope = optional_param("scope", "course", PARAM_ALPHA);
 $download = optional_param("download", "", PARAM_ALPHA);
+
+if ($courseid === 0) {
+    require_login();
+
+    $context = context_system::instance();
+    $courses = get_user_capability_course(
+        "local/missingstudents:viewreport",
+        null,
+        true,
+        "fullname,shortname,visible",
+        "fullname ASC"
+    );
+
+    $courselist = [];
+    foreach ($courses ?: [] as $courseitem) {
+        if ((int)$courseitem->id === SITEID) {
+            continue;
+        }
+
+        $coursecontext = context_course::instance($courseitem->id);
+        if (empty($courseitem->visible) && !has_capability("moodle/course:viewhiddencourses", $coursecontext)) {
+            continue;
+        }
+
+        $courselist[] = [
+            "id" => (int)$courseitem->id,
+            "fullname" => format_string($courseitem->fullname, true, ["context" => $coursecontext]),
+            "shortname" => format_string($courseitem->shortname, true, ["context" => $coursecontext]),
+            "url" => (new moodle_url("/local/missingstudents/", ["id" => $courseitem->id]))->out(false),
+            "hidden" => empty($courseitem->visible),
+        ];
+    }
+
+    $PAGE->set_url(new moodle_url("/local/missingstudents/"));
+    $PAGE->set_context($context);
+    $PAGE->set_pagelayout("report");
+    $PAGE->set_title(get_string("courselist", "local_missingstudents"));
+    $PAGE->set_heading(get_string("pluginname", "local_missingstudents"));
+
+    echo $OUTPUT->header();
+    echo $OUTPUT->render_from_template("local_missingstudents/course_list", [
+        "courses" => $courselist,
+        "hascourses" => !empty($courselist),
+        "coursecount" => count($courselist),
+    ]);
+    echo $OUTPUT->footer();
+    exit;
+}
 
 $course = get_course($courseid);
 require_login($course);
@@ -78,7 +126,7 @@ if ($download === "csv") {
     exit;
 }
 
-$PAGE->set_url(new moodle_url("/local/missingstudents/index.php", [
+$PAGE->set_url(new moodle_url("/local/missingstudents/", [
     "id" => $course->id,
     "days" => $days,
     "scope" => $scope,
@@ -96,7 +144,7 @@ $event = \local_missingstudents\event\report_viewed::create([
 ]);
 $event->trigger();
 
-$data = $service->get_dashboard_data($OUTPUT);
+$data = $service->get_dashboard_data();
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template("local_missingstudents/dashboard", $data);

@@ -14,11 +14,6 @@
     white-space: nowrap;
 }
 
-.local-missingstudents .card {
-    border-color: var(--ms-border);
-    box-shadow: 0 6px 24px rgba(34, 51, 84, .06);
-}
-
 .ms-hero {
     display: flex;
     align-items: flex-start;
@@ -50,20 +45,14 @@
     color: var(--ms-text-muted);
 }
 
-.ms-toolbar {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    align-items: end;
-    gap: 1rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
-
 .ms-filter-form,
 .ms-scope-switch {
     display: flex;
-    gap: .5rem;
     align-items: end;
+}
+
+.ms-filter-form {
+    gap: .5rem;
 }
 
 .ms-filter-form label {
@@ -214,11 +203,25 @@
     border-radius: 50%;
 }
 
-.ms-dot-attention { background: var(--ms-attention); }
-.ms-dot-medium { background: var(--ms-medium); }
-.ms-dot-high { background: var(--ms-high); }
-.ms-dot-critical { background: var(--ms-critical); }
-.ms-dot-never { background: var(--ms-never); }
+.ms-dot-attention {
+    background: var(--ms-attention);
+}
+
+.ms-dot-medium {
+    background: var(--ms-medium);
+}
+
+.ms-dot-high {
+    background: var(--ms-high);
+}
+
+.ms-dot-critical {
+    background: var(--ms-critical);
+}
+
+.ms-dot-never {
+    background: var(--ms-never);
+}
 
 .ms-bars {
     display: grid;
@@ -251,11 +254,25 @@
     border-radius: inherit;
 }
 
-.ms-fill-attention { background: var(--ms-attention); }
-.ms-fill-medium { background: var(--ms-medium); }
-.ms-fill-high { background: var(--ms-high); }
-.ms-fill-critical { background: var(--ms-critical); }
-.ms-fill-never { background: var(--ms-never); }
+.ms-fill-attention {
+    background: var(--ms-attention);
+}
+
+.ms-fill-medium {
+    background: var(--ms-medium);
+}
+
+.ms-fill-high {
+    background: var(--ms-high);
+}
+
+.ms-fill-critical {
+    background: var(--ms-critical);
+}
+
+.ms-fill-never {
+    background: var(--ms-never);
+}
 
 .ms-bar-percent {
     color: var(--ms-text-muted);
@@ -326,11 +343,30 @@
     white-space: nowrap;
 }
 
-.risk-attention { background: #fff7dd; color: #795600; }
-.risk-medium { background: #fff0db; color: #7a4400; }
-.risk-high { background: #fde7e2; color: #8c3020; }
-.risk-critical { background: #f8d8d4; color: #7e1d13; }
-.risk-never { background: #eee5fb; color: #4d2382; }
+.risk-attention {
+    background: #fff7dd;
+    color: #795600;
+}
+
+.risk-medium {
+    background: #fff0db;
+    color: #7a4400;
+}
+
+.risk-high {
+    background: #fde7e2;
+    color: #8c3020;
+}
+
+.risk-critical {
+    background: #f8d8d4;
+    color: #7e1d13;
+}
+
+.risk-never {
+    background: #eee5fb;
+    color: #4d2382;
+}
 
 .ms-panel-header-table {
     align-items: end;
@@ -381,11 +417,6 @@
 @media (max-width: 1100px) {
     .ms-kpis {
         grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .ms-toolbar {
-        grid-template-columns: 1fr;
-        align-items: start;
     }
 }
 
