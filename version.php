@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026091400;
-$plugin->release = "1.1.0";
+$plugin->version = 2026091500;
+$plugin->release = "1.1.1";
 $plugin->component = "local_missingstudents";
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_STABLE;
