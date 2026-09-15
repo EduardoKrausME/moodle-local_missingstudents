@@ -1,0 +1,222 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_missingstudents/dashboard
+
+    Dashboard for course inactivity and retention risk.
+
+    Example context (json):
+    {
+        "courseid": 2,
+        "coursename": "Example course",
+        "days": 10,
+        "trackedcount": 120,
+        "missingcount": 18,
+        "activecount": 102,
+        "nevercount": 3,
+        "criticalcount": 7,
+        "missingpercent": 15,
+        "activepercent": 85,
+        "averagedays": 26,
+        "hasstudents": true
+    }
+}}
+<div class="local-missingstudents" data-region="missingstudents-dashboard">
+    <div class="ms-hero">
+        <div>
+            <div class="ms-eyebrow">{{scopelabel}}</div>
+            <h2 class="ms-title">{{#str}}pluginname, local_missingstudents{{/str}}</h2>
+            <p class="ms-subtitle">{{#str}}reportsubtitle, local_missingstudents{{/str}}</p>
+        </div>
+        <a class="btn btn-outline-secondary" href="{{downloadurl}}">{{#str}}exportcsv, local_missingstudents{{/str}}</a>
+    </div>
+
+    <div class="ms-toolbar card">
+        <form method="get" class="ms-filter-form">
+            <input type="hidden" name="id" value="{{courseid}}">
+            <input type="hidden" name="scope" value="{{#scopecourse}}course{{/scopecourse}}{{#scopesite}}site{{/scopesite}}">
+            <label>
+                <span>{{#str}}threshold, local_missingstudents{{/str}}</span>
+                <select class="form-select" name="days">
+                    {{#thresholdoptions}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                    {{/thresholdoptions}}
+                </select>
+            </label>
+            <button class="btn btn-primary" type="submit">{{#str}}apply, local_missingstudents{{/str}}</button>
+        </form>
+        <div class="ms-scope-switch" role="group" aria-label="{{#str}}scope, local_missingstudents{{/str}}">
+            <a href="{{coursescopeurl}}" class="btn {{#scopecourse}}btn-primary{{/scopecourse}}{{^scopecourse}}btn-outline-primary{{/scopecourse}}">{{#str}}scope_course, local_missingstudents{{/str}}</a>
+            <a href="{{sitescopeurl}}" class="btn {{#scopesite}}btn-primary{{/scopesite}}{{^scopesite}}btn-outline-primary{{/scopesite}}">{{#str}}scope_site, local_missingstudents{{/str}}</a>
+        </div>
+        <div class="ms-scope-description">
+            {{#scopecourse}}{{#str}}courseaccessdescription, local_missingstudents{{/str}}{{/scopecourse}}
+            {{#scopesite}}{{#str}}siteaccessdescription, local_missingstudents{{/str}}{{/scopesite}}
+        </div>
+    </div>
+
+    <div class="ms-kpis">
+        <div class="ms-kpi card">
+            <div class="ms-kpi-label">{{#str}}trackedstudents, local_missingstudents{{/str}}</div>
+            <div class="ms-kpi-value">{{trackedcount}}</div>
+            <div class="ms-kpi-meta">{{activepercent}}% {{#str}}activewithin, local_missingstudents{{/str}}</div>
+        </div>
+        <div class="ms-kpi card ms-kpi-danger">
+            <div class="ms-kpi-label">{{#str}}missingstudents, local_missingstudents{{/str}}</div>
+            <div class="ms-kpi-value">{{missingcount}}</div>
+            <div class="ms-kpi-meta">{{missingpercent}}% {{#str}}oftotal, local_missingstudents{{/str}}</div>
+        </div>
+        <div class="ms-kpi card">
+            <div class="ms-kpi-label">{{#str}}neveraccessed, local_missingstudents{{/str}}</div>
+            <div class="ms-kpi-value">{{nevercount}}</div>
+            <div class="ms-kpi-meta">{{#str}}risk_never, local_missingstudents{{/str}}</div>
+        </div>
+        <div class="ms-kpi card">
+            <div class="ms-kpi-label">{{#str}}criticalstudents, local_missingstudents{{/str}}</div>
+            <div class="ms-kpi-value">{{criticalcount}}</div>
+            <div class="ms-kpi-meta">{{#str}}criticalhint, local_missingstudents{{/str}}</div>
+        </div>
+        <div class="ms-kpi card">
+            <div class="ms-kpi-label">{{#str}}averagedays, local_missingstudents{{/str}}</div>
+            <div class="ms-kpi-value">{{averagedays}}</div>
+            <div class="ms-kpi-meta">{{#str}}daysunit, local_missingstudents{{/str}}</div>
+        </div>
+    </div>
+
+    {{#hasstudents}}
+    <div class="ms-grid-two">
+        <section class="card ms-panel">
+            <div class="ms-panel-header">
+                <h3>{{#str}}riskdistribution, local_missingstudents{{/str}}</h3>
+                <span>{{missingcount}} {{#str}}missingstudents, local_missingstudents{{/str}}</span>
+            </div>
+            <div class="ms-donut-layout">
+                <div class="ms-donut" data-region="risk-donut">
+                    {{#riskgroups}}<span data-risk="{{key}}" data-count="{{count}}"></span>{{/riskgroups}}
+                    <div class="ms-donut-center"><strong>{{missingpercent}}%</strong><span>{{#str}}missinglabel, local_missingstudents{{/str}}</span></div>
+                </div>
+                <div class="ms-legend">
+                    {{#riskgroups}}
+                    <div class="ms-legend-row">
+                        <span class="ms-legend-dot ms-dot-{{key}}"></span>
+                        <span>{{label}}</span>
+                        <strong>{{count}}</strong>
+                        <small>{{percent}}%</small>
+                    </div>
+                    {{/riskgroups}}
+                </div>
+            </div>
+        </section>
+
+        <section class="card ms-panel">
+            <div class="ms-panel-header">
+                <h3>{{#str}}absencebands, local_missingstudents{{/str}}</h3>
+                <span>{{#str}}distribution, local_missingstudents{{/str}}</span>
+            </div>
+            <div class="ms-bars">
+                {{#buckets}}
+                <div class="ms-bar-row">
+                    <div class="ms-bar-label"><span>{{label}}</span><strong>{{count}}</strong></div>
+                    <div class="ms-bar-track"><div class="ms-bar-fill ms-fill-{{key}}" style="width: {{percent}}%"></div></div>
+                    <div class="ms-bar-percent">{{percent}}%</div>
+                </div>
+                {{/buckets}}
+            </div>
+        </section>
+    </div>
+
+    {{#hastopstudents}}
+    <section class="card ms-panel">
+        <div class="ms-panel-header">
+            <h3>{{#str}}mostcritical, local_missingstudents{{/str}}</h3>
+            <span>{{#str}}topcount, local_missingstudents{{/str}}</span>
+        </div>
+        <div class="ms-critical-list">
+            {{#topstudents}}
+            <a class="ms-critical-row" href="{{profileurl}}">
+                <div class="ms-avatar">{{{picture}}}</div>
+                <div class="ms-critical-main">
+                    <div class="ms-critical-head"><strong>{{fullname}}</strong><span class="ms-risk-pill {{riskclass}}">{{risklabel}}</span></div>
+                    <div class="ms-critical-bar"><span style="width: {{barpercent}}%"></span></div>
+                    <small>{{dayslabel}}</small>
+                </div>
+                <div class="ms-critical-date">{{relevantaccess}}</div>
+            </a>
+            {{/topstudents}}
+        </div>
+    </section>
+    {{/hastopstudents}}
+
+    <section class="card ms-panel">
+        <div class="ms-panel-header ms-panel-header-table">
+            <div>
+                <h3>{{#str}}detailedlist, local_missingstudents{{/str}}</h3>
+                <span data-region="visible-count">{{missingcount}}</span>
+            </div>
+            <div class="ms-table-filters">
+                <label class="sr-only" for="missingstudents-search">{{#str}}filterstudents, local_missingstudents{{/str}}</label>
+                <input id="missingstudents-search" type="search" class="form-control" data-region="student-search" placeholder="{{#str}}filterstudentsplaceholder, local_missingstudents{{/str}}">
+                <label class="sr-only" for="missingstudents-risk">{{#str}}filterrisk, local_missingstudents{{/str}}</label>
+                <select id="missingstudents-risk" class="form-select" data-region="risk-filter">
+                    <option value="">{{#str}}allrisks, local_missingstudents{{/str}}</option>
+                    <option value="attention">{{#str}}risk_attention, local_missingstudents{{/str}}</option>
+                    <option value="medium">{{#str}}risk_medium, local_missingstudents{{/str}}</option>
+                    <option value="high">{{#str}}risk_high, local_missingstudents{{/str}}</option>
+                    <option value="critical">{{#str}}risk_critical, local_missingstudents{{/str}}</option>
+                    <option value="never">{{#str}}risk_never, local_missingstudents{{/str}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle ms-table" data-region="students-table">
+                <thead>
+                    <tr>
+                        <th>{{#str}}student, local_missingstudents{{/str}}</th>
+                        <th>{{#str}}status, local_missingstudents{{/str}}</th>
+                        <th class="text-end">{{#str}}daysaway, local_missingstudents{{/str}}</th>
+                        <th>{{#str}}relevantaccess, local_missingstudents{{/str}}</th>
+                        <th>{{#str}}courseaccess, local_missingstudents{{/str}}</th>
+                        <th>{{#str}}siteaccess, local_missingstudents{{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#students}}
+                    <tr data-region="student-row" data-risk="{{riskkey}}" data-days="{{dayssort}}" data-search="{{fullname}} {{email}} {{idnumber}}">
+                        <td>
+                            <a class="ms-student" href="{{profileurl}}">
+                                <span class="ms-avatar">{{{picture}}}</span>
+                                <span><strong>{{fullname}}</strong><small>{{email}}{{#idnumber}} · {{idnumber}}{{/idnumber}}</small></span>
+                            </a>
+                        </td>
+                        <td><span class="ms-risk-pill {{riskclass}}">{{risklabel}}</span></td>
+                        <td class="text-end"><strong>{{dayslabel}}</strong></td>
+                        <td>{{relevantaccess}}</td>
+                        <td>{{courseaccess}}</td>
+                        <td>{{siteaccess}}</td>
+                    </tr>
+                    {{/students}}
+                </tbody>
+            </table>
+        </div>
+        <div class="ms-no-results" data-region="no-results" hidden>{{#str}}noresults, local_missingstudents{{/str}}</div>
+    </section>
+    {{/hasstudents}}
+
+    {{#nostudents}}
+    <div class="alert alert-success ms-empty">{{#str}}nostudents, local_missingstudents{{/str}}</div>
+    {{/nostudents}}
+</div>
