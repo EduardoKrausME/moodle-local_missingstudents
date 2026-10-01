@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function($) {
+define(["jquery"], function ($) {
     var riskColors = {
         attention: "#f4c95d",
         medium: "#f0a34a",
@@ -30,7 +30,7 @@ define(["jquery"], function($) {
         never: "#6f42c1"
     };
 
-    var buildDonut = function() {
+    var buildDonut = function () {
         var $donut = $("[data-region='risk-donut']");
         if (!$donut.length) {
             return;
@@ -38,7 +38,7 @@ define(["jquery"], function($) {
 
         var values = [];
         var total = 0;
-        $donut.find("[data-risk]").each(function() {
+        $donut.find("[data-risk]").each(function () {
             var count = parseInt($(this).attr("data-count"), 10) || 0;
             var risk = $(this).attr("data-risk");
             values.push({risk: risk, count: count});
@@ -51,7 +51,7 @@ define(["jquery"], function($) {
 
         var cursor = 0;
         var parts = [];
-        $.each(values, function(index, item) {
+        $.each(values, function (index, item) {
             if (!item.count) {
                 return;
             }
@@ -62,7 +62,7 @@ define(["jquery"], function($) {
         $donut.css("background", "conic-gradient(" + parts.join(",") + ")");
     };
 
-    var bindFilters = function() {
+    var bindFilters = function () {
         var $search = $("[data-region='student-search']");
         var $risk = $("[data-region='risk-filter']");
         var $rows = $("[data-region='student-row']");
@@ -73,12 +73,12 @@ define(["jquery"], function($) {
             return;
         }
 
-        var apply = function() {
+        var apply = function () {
             var query = ($search.val() || "").toString().toLowerCase().trim();
             var risk = ($risk.val() || "").toString();
             var visible = 0;
 
-            $rows.each(function() {
+            $rows.each(function () {
                 var $row = $(this);
                 var search = ($row.attr("data-search") || "").toLowerCase();
                 var rowRisk = $row.attr("data-risk") || "";
@@ -98,7 +98,7 @@ define(["jquery"], function($) {
     };
 
     return {
-        init: function() {
+        init: function () {
             buildDonut();
             bindFilters();
         }

@@ -22,6 +22,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_missingstudents\event\report_viewed;
+use local_missingstudents\report_service;
+
 require_once(__DIR__ . "/../../config.php");
 require_once($CFG->libdir . "/csvlib.class.php");
 
@@ -93,7 +96,7 @@ if ($days <= 0) {
 $days = min(3650, max(1, $days));
 $scope = $scope === "site" ? "site" : "course";
 
-$service = new \local_missingstudents\report_service($course, $context, $days, $scope);
+$service = new report_service($course, $context, $days, $scope);
 
 if ($download === "csv") {
     $filename = clean_filename("missing-students-{$course->shortname}-{$days}-days");
@@ -138,7 +141,7 @@ $PAGE->set_title(get_string("pluginname", "local_missingstudents"));
 $PAGE->set_heading($course->fullname);
 $PAGE->requires->js_call_amd("local_missingstudents/dashboard", "init");
 
-$event = \local_missingstudents\event\report_viewed::create([
+$event = report_viewed::create([
     "context" => $context,
     "courseid" => $course->id,
 ]);

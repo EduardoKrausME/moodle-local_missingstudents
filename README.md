@@ -1,10 +1,13 @@
 # local_missingstudents — Alunos Sumidos
 
-Relatório local de retenção por curso. Lista alunos acompanhados pelo Moodle que ultrapassaram um limite de inatividade e mostra um dashboard com indicadores, distribuição de risco, faixas de ausência, ranking de criticidade, filtros e exportação CSV.
+Relatório local de retenção por curso. Lista alunos acompanhados pelo Moodle que ultrapassaram um limite de inatividade
+e mostra um dashboard com indicadores, distribuição de risco, faixas de ausência, ranking de criticidade, filtros e
+exportação CSV.
 
 ## Critério de aluno
 
-O plugin usa `moodle/course:isincompletionreports`, a mesma capability que o Moodle usa para identificar usuários acompanhados em relatórios de conclusão. Por padrão, ela pertence ao papel de estudante.
+O plugin usa `moodle/course:isincompletionreports`, a mesma capability que o Moodle usa para identificar usuários
+acompanhados em relatórios de conclusão. Por padrão, ela pertence ao papel de estudante.
 
 ## Critérios de inatividade
 

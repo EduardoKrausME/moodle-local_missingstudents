@@ -24,10 +24,15 @@
 
 namespace local_missingstudents\event;
 
+use coding_exception;
+use core\event\base;
+use core\exception\moodle_exception;
+use moodle_url;
+
 /**
  * Event fired when the report is viewed.
  */
-class report_viewed extends \core\event\base {
+class report_viewed extends base {
     /**
      * init
      *
@@ -42,7 +47,7 @@ class report_viewed extends \core\event\base {
      * get_name
      *
      * @return string
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public static function get_name(): string {
         return get_string("eventreportviewed", "local_missingstudents");
@@ -60,10 +65,10 @@ class report_viewed extends \core\event\base {
     /**
      * get_url
      *
-     * @return \moodle_url
-     * @throws \core\exception\moodle_exception
+     * @return moodle_url
+     * @throws moodle_exception
      */
-    public function get_url(): \moodle_url {
-        return new \moodle_url("/local/missingstudents/", ["id" => $this->courseid]);
+    public function get_url(): moodle_url {
+        return new moodle_url("/local/missingstudents/", ["id" => $this->courseid]);
     }
 }

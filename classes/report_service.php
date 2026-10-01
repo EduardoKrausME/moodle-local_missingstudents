@@ -154,7 +154,7 @@ class report_service {
             }
         }
 
-        usort($missing, static function(array $a, array $b): int {
+        usort($missing, static function (array $a, array $b): int {
             if ($a["never"] !== $b["never"]) {
                 return $a["never"] ? -1 : 1;
             }
@@ -269,7 +269,7 @@ class report_service {
      * @param stdClass $student
      * @return array
      * @throws coding_exception
-     * @throws \core\exception\moodle_exception
+     * @throws moodle_exception
      */
     private function build_student_view(stdClass $student): array {
         global $OUTPUT;

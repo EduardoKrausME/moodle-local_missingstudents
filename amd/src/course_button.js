@@ -21,9 +21,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function($) {
+define(["jquery"], function ($) {
     return {
-        init: function(config) {
+        init: function (config) {
             if (!config || !config.url || $("#local-missingstudents-course-button").length) {
                 return;
             }

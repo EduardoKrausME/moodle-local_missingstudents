@@ -24,10 +24,12 @@
 
 namespace local_missingstudents\privacy;
 
+use core_privacy\local\metadata\null_provider;
+
 /**
  * Privacy provider for a read-only report plugin.
  */
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements null_provider {
     /**
      * get_reason
      *
