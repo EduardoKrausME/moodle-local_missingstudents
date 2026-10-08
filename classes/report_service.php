@@ -76,12 +76,24 @@ class report_service {
      * @throws dml_exception
      */
     public function get_students(): array {
-        global $DB;
+        global $DB, $USER;
+
+        // Empty arrays mean "all groups" in get_enrolled_sql(), so return no students
+        // for staff without group memberships in a Separate groups course.
+        $groupids = 0;
+        if (groups_get_course_groupmode($this->course) === SEPARATEGROUPS
+                && !has_capability("moodle/site:accessallgroups", $this->context)) {
+            $groups = groups_get_all_groups($this->course->id, $USER->id);
+            if (empty($groups)) {
+                return [];
+            }
+            $groupids = array_map("intval", array_keys($groups));
+        }
 
         [$enrolledsql, $params] = get_enrolled_sql(
             $this->context,
             "moodle/course:isincompletionreports",
-            0,
+            $groupids,
             true
         );
 

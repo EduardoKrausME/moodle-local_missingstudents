@@ -1,0 +1,36 @@
+{{!
+    @template local_missingstudents/course_list
+    Course selector available to users with the report capability.
+
+    Context: courses, hascourses, coursecount.
+}}
+<div class="container-fluid local-missingstudents-courses">
+    <div class="mb-4">
+        <h2>{{#str}}availablecourses, local_missingstudents{{/str}}</h2>
+        <p class="text-muted">{{#str}}courselistsubtitle, local_missingstudents{{/str}}</p>
+    </div>
+    {{#hascourses}}
+        <div class="row g-3">
+            {{#courses}}
+                <div class="col-12 col-md-6 col-xl-4">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h3 class="h5 card-title">{{fullname}}</h3>
+                            <p class="text-muted mb-3">{{shortname}}</p>
+                            <div class="mt-auto">
+                                <a class="btn btn-primary" href="{{url}}">
+                                    {{#str}}openreport, local_missingstudents{{/str}}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/courses}}
+        </div>
+    {{/hascourses}}
+    {{^hascourses}}
+        <div class="alert alert-info" role="status">
+            {{#str}}nocoursesavailable, local_missingstudents{{/str}}
+        </div>
+    {{/hascourses}}
+</div>
