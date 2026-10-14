@@ -39,6 +39,8 @@ final class report_service_test extends \advanced_testcase {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(["groupmode" => SEPARATEGROUPS]);
+        // Numeric course fields may be returned as strings by the database driver.
+        $course->groupmode = (string)SEPARATEGROUPS;
         $context = \context_course::instance($course->id);
 
         $teacher = $generator->create_user();
@@ -61,12 +63,16 @@ final class report_service_test extends \advanced_testcase {
         assign_capability("moodle/site:accessallgroups", CAP_PROHIBIT, $role->id, $context->id);
 
         $this->setUser($teacher);
+        $this->assertFalse(has_capability("moodle/site:accessallgroups", $context));
         $report = new report_service($course, $context, 10, "course");
-        $this->assertSame([$studentone->id], array_keys($report->get_students()));
-        $this->assertCount(1, $report->get_missing_students_for_export());
+        $this->assertSame([(int)$studentone->id], array_keys($report->get_students()));
+        $exportrows = $report->get_missing_students_for_export();
+        $this->assertCount(1, $exportrows);
+        $this->assertSame($studentone->email, $exportrows[0]["email"]);
 
         // Passing [] to get_enrolled_sql() means all groups; never do that here.
         $this->setUser($teacherwithoutgroup);
+        $this->assertFalse(has_capability("moodle/site:accessallgroups", $context));
         $report = new report_service($course, $context, 10, "course");
         $this->assertSame([], $report->get_students());
         $this->assertSame([], $report->get_missing_students_for_export());
