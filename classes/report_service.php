@@ -81,7 +81,7 @@ class report_service {
         // Empty arrays mean "all groups" in get_enrolled_sql(), so return no students
         // for staff without group memberships in a Separate groups course.
         $groupids = 0;
-        if (groups_get_course_groupmode($this->course) === SEPARATEGROUPS
+        if ((int)groups_get_course_groupmode($this->course) === SEPARATEGROUPS
                 && !has_capability("moodle/site:accessallgroups", $this->context)) {
             $groups = groups_get_all_groups($this->course->id, $USER->id);
             if (empty($groups)) {
